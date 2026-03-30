@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<head>
+    <body>
+        <html>
+            <title>Nav Atrasts - Versartylix</title>
+            <h1>Servers nevarēja atrast pareizo linku del pāradresejas.</h1>
+            <h3>Tas nozīmē ka tas links nav izveidots, vai dzēsts</h3>
+        </html>
+    </body>
+</head>
+<noscript>
+    <p> 79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir atpējots, lai iespējotu. Lūdzu iespējojiet javascript ejot chrome://settings/content/siteDetails?site=https%3A%2F%2Fversatylix.github.io</p>
+
+<script>document.write("Javascript ir aktīvs")</script>
+<script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"</script>
+<div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir neaktīvs</h6></div>
+<script>
+
+  document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive";
+</script>
+  <style>
+       
+        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_hidden {
+            display: none;
+        }
+
+       
+        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive {
+            display: block;
+        }
+    </style>
+
+    </noscript>
+    <div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir aktīvs</h6></div>
+    <script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"</script>
+    <!--Šis kods ir tikai lietojumam companījai Versatylix--><noscript>
+    <p> 79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir atpējots, lai iespējotu. Lūdzu iespējojiet javascript ejot chrome://settings/content/siteDetails?site=https%3A%2F%2Fversatylix.github.io</p>
+
+<script>document.write("Javascript ir aktīvs")</script>
+<script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"</script>
+<div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir neaktīvs</h6></div>
+<script>
+
+  document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive";
+</script>
+  <style>
+       
+        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_hidden {
+            display: none;
+        }
+
+       
+        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive {
+            display: block;
+        }
+    </style>
+
+    </noscript>
+    <div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir aktīvs</h6></div>
+    <script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"</script>
+    <!--Šis kods ir tikai lietojumam companījai Versatylix-->
