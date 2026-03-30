@@ -1,48 +1,67 @@
 <!DOCTYPE html>
+<html lang="lv">
 <head>
-    <body>
-        <html>
-            <title>404 - Versatylix</title>
-<div class="error-container">
-        <h1>404</h1>
-        <p>Serveris nevarēja atrast resursu <span id="link-path" class="missing-link"></span></p>
-        <hr>
-        <p><a href="/">Atgriezties uz sākumlapu</a></p>
-    </div>
+    <meta charset="UTF-8">
+    <title>404 - Versatylix</title>
+</head>
+<body>
+
+    <h1 id="error-title">404 - Not Found</h1>
+    <p id="status-message">Serveris nevarēja atrast resursu: <span id="link-path"></span></p>
+    
+    <hr>
+    
+    <p><a href="/">Atgriezties uz sākumlapu</a></p>
+
+    <p>
+        <noscript>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir neaktīvs (Lūdzu iespējojiet JS)</noscript>
+        <script>
+            document.write("79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir aktīvs");
+        </script>
+    </p>
 
     <script>
-        
-        const currentPath = window.location.pathname;
-        
-        
-        document.getElementById('link-path').textContent = currentPath;
+        (function() {
+            // Internais vārdu saraksts (Inside the file now)
+            const BANNED_WORDS = [
+                // LV
+                "mauka", "kuce", "kucesdels", "dirsa", "pizda", "pizdabols", "peza", "pimpis", 
+                "mudaks", "lohs", "suds", "mesls", "padauza", "pedins", "dirsalidejs", "kakulacis", 
+                "pipeljaizha", "pezhlaizisr", "matesdrazcjs", "sudagabals", "akadirsejs", 
+                "pezuveste", "maukmabele", "aitasgalva", "cirvis", "pimpausis", "eidirst", 
+                "izdiratakrizdole", "arpirkstutaisits", "rokasnodirsasaug", "pissuda",
+                // EN
+                "arse", "arsehead", "arsehole", "ass", "asshole", "bastard", "bitch", "bloody", 
+                "bollocks", "brotherfucker", "bugger", "bullshit", "childfucker", "cock", 
+                "cocksucker", "crap", "cunt", "dammit", "damn", "damned", "dick", "dickhead", 
+                "dumbass", "dyke", "fag", "faggot", "fatherfucker", "fuck", "fucked", "fucker", 
+                "fucking", "goddamn", "hell", "horseshit", "jackass", "motherfucker", "nigga", 
+                "piss", "prick", "pussy", "shit", "shite", "slut", "tranny", "twat", "wanker"
+            ];
+
+            const rawPath = window.location.pathname;
+            // Noņemam simbolus, lai nevarētu apiet filtru ar punktiem vai svītriņām
+            const cleanPath = rawPath.toLowerCase().replace(/[^a-z0-9]/g, "");
+            
+            const displaySpan = document.getElementById('link-path');
+            const messageP = document.getElementById('status-message');
+            const titleH1 = document.getElementById('error-title');
+
+            const isBlocked = BANNED_WORDS.some(word => {
+                const cleanWord = word.toLowerCase().replace(/[^a-z0-9]/g, "");
+                return cleanPath.includes(cleanWord);
+            });
+
+            if (isBlocked) {
+                // Ja atrasts slikts vārds
+                titleH1.textContent = "403 - Forbidden";
+                messageP.innerHTML = "<b>Pieprasītais resurss ir bloķēts nepiemērota satura dēļ.</b>";
+            } else {
+                // Ja viss kārtībā
+                displaySpan.textContent = rawPath;
+            }
+        })();
     </script>
-        </html>
+
     </body>
-</head>
-<noscript>
-    <p> 79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir atpējots, lai iespējotu. Lūdzu iespējojiet javascript ejot chrome://settings/content/siteDetails?site=https%3A%2F%2Fversatylix.github.io</p>
-
-<script>document.write("Javascript ir aktīvs")</script>
-<script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"</script>
-<div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir neaktīvs</h6></div>
-<script>
-
-  document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive";
-</script>
-  <style>
-       
-        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_hidden {
-            display: none;
-        }
-
-       
-        ._79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_innactive {
-            display: block;
-        }
-    </style>
-
-    </noscript>
-    <div class="79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"><h6>79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir aktīvs</h6></div>
-    <script>document.documentElement.className = "79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be_active"</script>
-    <!--Šis kods ir tikai lietojumam companījai Versatylix-->
+</html>
