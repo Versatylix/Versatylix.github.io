@@ -4,7 +4,77 @@
         <body>
             <title>Lgoos lejuplāde - Versatylix</title>
             <h1>Lgoos - Versatylix Lejuplādes</h1>
-            <h3>Lejuplādet <a href="https://versatylix.github.io/navpabeigts.html">Lgoos</a></h3>
+            <!-- Galvenā sadaļa -->
+  <section class="hero-bg">
+    <div class="download-hero">
+      <div class="big-icon">EXE</div>
+      <h1>EXE Tester</h1>
+      <p>Bezmaksas Telemetrijas, AI noņēmējs.<br>
+      Darbojas bez interneta • Nekad nesūta datus • aizverts pirmkods</p>
+
+      <!-- Automātiskā poga un info -->
+      <div id="autoDownload" class="loading">
+        Ielādējam jaunāko versiju no GitHub...
+      </div>
+    </div>
+</section>
+  <script>
+    // Ielādē jaunāko release no GitHub
+    fetch('https://api.github.com/repos/Versatylix/Lgoos/releases/latest')
+      .then(response => response.json())
+      .then(data => {
+        const asset = data.assets.find(a => a.name.endsWith('.exe'));
+        if (!asset) throw new Error('Nav .exe faila');
+
+        const version = data.tag_name.replace(/^v/, ''); // noņem "v" no v1.8.3 → 1.8.3
+        const sizeKB = (asset.size / 1024).toFixed(0);
+        const date = new Date(data.published_at).toLocaleDateString('lv-LV');
+        const downloadUrl = asset.browser_download_url;
+
+        // Galvenā poga – tīsa un tīra
+        document.getElementById('autoDownload').innerHTML = `
+          <a href="${downloadUrl}" class="cta-button">
+            Lejupielādēt EXETester ${version}
+          </a>
+          <p style="margin-top: 20px; color: #444; font-size: 1.1rem;">
+            <strong>Versija:</strong> ${version} | <strong>Izmērs:</strong> ${sizeKB} KB | <strong>Datums:</strong> ${date}
+          </p>
+
+          <div class="info-grid">
+            <div class="info-card"><h3>${sizeKB} KB</h3><p>Ļoti viegls un ātrs</p></div>
+            <div class="info-card"><h3>Bez interneta</h3><p>Nekas netiek sūtīts</p></div>
+            <div class="info-card"><h3>Aizverts pirmkods</h3><p><a href="https://github.com/Versatylix/Lgoos/" target="_blank">GitHub</a></p></div>
+            <div class="info-card"><h3>Windows 7–11</h3><p>Visām versijām</p></div>
+          </div>
+
+          <details style="margin-top: 32px; text-align: left;">
+            <summary style="cursor: pointer; color: #1a73e8; font-weight: 600;">Rādīt SHA256 hash (drošībai)</summary>
+            <div class="hash" id="hash">Ielādējam hash...</div>
+          </details>
+        `;
+
+        // Ja ir SHA256 fails (piem. SHA256.txt)
+        const hashAsset = data.assets.find(a => a.name.toLowerCase().includes('sha256'));
+        if (hashAsset) {
+          fetch(hashAsset.browser_download_url)
+            .then(r => r.text())
+            .then(txt => {
+              document.getElementById('hash').textContent = txt.trim().split(' ')[0];
+            });
+        } else {
+          document.getElementById('hash').textContent = 'Hash nav pievienots šajā versijā';
+        }
+
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('autoDownload').innerHTML = `
+          <a href="https://github.com/Versatylix/Lgoos/releases/" target="_blank" class="cta-button">
+            Lejupielādēt no GitHub
+          </a>
+          <p style="margin-top:16px; color:#d93025;">Nevarēja ielādēt automātisko versiju</p>`;
+      });
+      </script>
             <footer>2024 - 2026 Versatylix visas autortiesības/tiesības aizsargātas</footer>
                         <noscript>
     <p> 79acf949b157c937a1a6d951a78e36be489270d47a98069ed58c534d92c4d5be ir atpējots, lai iespējotu. Lūdzu iespējojiet javascript ejot chrome://settings/content/siteDetails?site=https%3A%2F%2Fversatylix.github.io</p>
