@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinter | Galīgā Versija</title>
+    <style>
+        :root {
+            --neon-blue: #00d2ff;
+            --neon-pink: #ff0055;
+            --glass: rgba(15, 15, 25, 0.85);
+            --accent: #3a86ff;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #05050a;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        /* --- Modern HUD --- */
+        .hud-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .hud-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            min-width: 180px;
+        }
+
+        .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .value {
+            font-size: 32px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* --- Overlays --- */
+        .overlay {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            text-align: center;
+            pointer-events: auto;
+            width: 450px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+        }
+
+        h1 {
+            font-size: 56px;
+            margin: 0 0 10px 0;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .btn {
+            background: #fff;
+            border: none;
+            color: #000;
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 25px;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 6px; height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <div class="hud-container">
+            <div class="hud-card">
+                <div class="label">Attālums</div>
+                <div id="score-val" class="value">0</div>
+            </div>
+            <div class="hud-card">
+                <div class="label">Stabilitāte</div>
+                <div id="stab-val" class="value">100%</div>
+            </div>
+        </div>
+
+        <div id="crosshair"></div>
+
+        <div id="start-screen" class="overlay">
+            <h1>KINTER</h1>
+            <p style="color: rgba(255,255,255,0.6); line-height: 1.6;">
+                Pārbaudi savas robežas šajā nepielūdzamajā telpā.<br>
+                Izmanto <b>WASD</b> kustībai un <b>Space</b> lēcienam.
+            </p>
+            <button class="btn" id="start-button">SĀKT SPĒLI</button>
+        </div>
+
+        <div id="death-screen" class="overlay" style="display:none">
+            <h1 style="color: var(--neon-pink); -webkit-text-fill-color: var(--neon-pink);">BEIGAS</h1>
+            <div class="label">Rezultāts</div>
+            <div id="final-score" class="value">0</div>
+            <button class="btn" id="retry-button">MĒĢINĀT VĒLREIZ</button>
+        </div>
+
+        <div class="footer">
+            <p>
+                <a href="https://versatylix.github.io/kinter/" target="_blank">versatylix.github.io/kinter/</a><br>
+                2024 - 2026 Versatylix Visas Autortiesības/Tiesības aizsargātas
+            </p>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        (function() {
+            const CONFIG = {
+                BASE_GRAVITY: -0.022,   // Adjusted from -0.028 for better jump arc
+                JUMP: 0.48,             // Increased from 0.46
+                D_JUMP: 0.40,           // Increased from 0.38
+                AIR_STEER: 0.009,       // Better air control
+                MAX_SPEED: 0.4,
+                BASE_DECAY: 0.020,      // Slightly slower initial decay
+                MIN_SIZE: 1.2,          // Slightly larger minimum platforms
+                MAX_GAP: 24,            // Gap limit adjusted for higher jumps
+                SCALING_RATE: 0.00005   // Slower difficulty scaling
+            };
+
+            let scene, camera, renderer, clock;
+            let player, playerVel = new THREE.Vector3();
+            let platforms = [], stars = [];
+            let score = 0, lastZ = 0, gameState = 'MENU', mouseLocked = false;
+            let keys = {}, jumps = 0, lastGrounded = 0;
+            let currentGravity = CONFIG.BASE_GRAVITY;
+
+            function init() {
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x05050a);
+                scene.fog = new THREE.FogExp2(0x05050a, 0.06);
+
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+                clock = new THREE.Clock();
+                
+                const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+                scene.add(ambient);
+
+                const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+                sun.position.set(5, 10, 7);
+                scene.add(sun);
+
+                const starGeo = new THREE.BufferGeometry();
+                const starPos = [];
+                for(let i=0; i<3000; i++) {
+                    starPos.push((Math.random()-0.5)*1000, (Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
+                }
+                starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+                const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
+                const starPoints = new THREE.Points(starGeo, starMat);
+                scene.add(starPoints);
+
+                player = new THREE.Group();
+                player.position.set(0, 2, 0);
+                scene.add(player);
+                player.add(camera);
+                camera.position.set(0, 1.7, 0);
+
+                spawnPlatform(0, -2, 0, 15, 1, 15, 0x222233, false);
+                for(let i=0; i<12; i++) spawnProcedural();
+
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+
+                document.addEventListener('keydown', e => {
+                    keys[e.code] = true;
+                    if(e.code === 'Space') handleJump();
+                });
+                document.addEventListener('keyup', e => keys[e.code] = false);
+                document.addEventListener('mousemove', e => {
+                    if(!mouseLocked) return;
+                    player.rotation.y -= e.movementX * 0.002;
+                    camera.rotation.x = Math.max(-1.4, Math.min(1.4, camera.rotation.x - e.movementY * 0.002));
+                });
+                document.addEventListener('pointerlockchange', () => mouseLocked = document.pointerLockElement === document.body);
+
+                document.getElementById('start-button').onclick = startGame;
+                document.getElementById('retry-button').onclick = () => location.reload();
+
+                requestAnimationFrame(loop);
+            }
+
+            function spawnPlatform(x, y, z, w, h, d, color, isHazardous = true) {
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: color,
+                    roughness: 0.2,
+                    metalness: 0.7,
+                    emissive: color,
+                    emissiveIntensity: 0.1,
+                    transparent: true
+                });
+                
+                const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+                mesh.position.set(x, y, z);
+                
+                const wireframe = new THREE.LineSegments(
+                    new THREE.EdgesGeometry(mesh.geometry),
+                    new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.15, transparent: true })
+                );
+                mesh.add(wireframe);
+
+                mesh.userData = { 
+                    w, h, d, 
+                    health: 1.0, 
+                    active: false, 
+                    decaying: isHazardous,
+                    type: Math.random() > 0.4 ? 'move' : 'static',
+                    offset: Math.random() * 100,
+                    lastPosX: x 
+                };
+                scene.add(mesh);
+                platforms.push(mesh);
+                lastZ = z + d/2;
+            }
+
+            function spawnProcedural() {
+                const diff = Math.min(score / 2000, 1);
+                const w = Math.max(CONFIG.MIN_SIZE, 7 - diff * 5.5);
+                const d = Math.max(CONFIG.MIN_SIZE, 7 - diff * 5.5);
+                
+                const lastP = platforms[platforms.length - 1];
+                const xRange = 10 + diff * 25;
+                const x = lastP.position.x + (Math.random() - 0.5) * xRange;
+                const y = lastP.position.y + (Math.random() - 0.5) * 7;
+                const gap = 12 + (diff * (CONFIG.MAX_GAP - 12));
+                const z = lastZ + gap;
+                
+                const color = new THREE.Color().setHSL(0.55 - diff * 0.5, 0.8, 0.5);
+                spawnPlatform(x, y, z, w, 0.6, d, color);
+            }
+
+            function handleJump() {
+                if(gameState !== 'PLAYING') return;
+                const now = Date.now();
+                // Increased jump buffer
+                if(now - lastGrounded < 150 || jumps < 2) {
+                    playerVel.y = (jumps === 0) ? CONFIG.JUMP : CONFIG.D_JUMP;
+                    jumps++;
+                    lastGrounded = 0; 
+                }
+            }
+
+            function loop() {
+                requestAnimationFrame(loop);
+                if(gameState !== 'PLAYING') {
+                    renderer.render(scene, camera);
+                    return;
+                }
+
+                currentGravity = Math.max(-0.04, CONFIG.BASE_GRAVITY - (score * CONFIG.SCALING_RATE));
+                const time = Date.now() * 0.001;
+
+                for (let p of platforms) {
+                    const b = p.userData;
+                    b.lastPosX = p.position.x;
+                    if(b.type === 'move') {
+                        const intensity = 0.15 + (score * 0.0003);
+                        p.position.x += Math.sin(time * 2.2 + b.offset) * intensity;
+                    }
+                }
+
+                const moveDir = new THREE.Vector3();
+                if(keys['KeyW']) moveDir.z -= 1;
+                if(keys['KeyS']) moveDir.z += 1;
+                if(keys['KeyA']) moveDir.x -= 1;
+                if(keys['KeyD']) moveDir.x += 1;
+                moveDir.applyQuaternion(player.quaternion).normalize();
+
+                playerVel.x += moveDir.x * CONFIG.AIR_STEER;
+                playerVel.z += moveDir.z * CONFIG.AIR_STEER;
+                playerVel.x *= 0.985;
+                playerVel.z *= 0.985;
+
+                playerVel.y += currentGravity;
+                player.position.add(playerVel);
+
+                let isGrounded = false;
+                let platformDeltaX = 0;
+                let foundPlat = null;
+
+                for (let i = platforms.length - 1; i >= 0; i--) {
+                    const p = platforms[i];
+                    const b = p.userData;
+
+                    const halfW = (b.w * p.scale.x) / 2;
+                    const halfD = (b.d * p.scale.z) / 2;
+                    const dx = Math.abs(player.position.x - p.position.x);
+                    const dz = Math.abs(player.position.z - p.position.z);
+
+                    if(dx < halfW + 0.4 && dz < halfD + 0.4) {
+                        const top = p.position.y + b.h / 2;
+                        if(playerVel.y <= 0 && player.position.y >= top - 0.7 && player.position.y <= top + 0.25) {
+                            player.position.y = top;
+                            playerVel.y = 0;
+                            isGrounded = true;
+                            b.active = true;
+                            foundPlat = p;
+                            platformDeltaX = p.position.x - b.lastPosX;
+                        }
+                    }
+
+                    if(b.active && b.decaying) {
+                        const decayMult = 1 + (score * 0.0005);
+                        b.health -= CONFIG.BASE_DECAY * decayMult;
+                        
+                        if(b.health <= 0) {
+                            scene.remove(p);
+                            platforms.splice(i, 1);
+                            continue; 
+                        }
+                        p.scale.set(b.health, 1, b.health);
+                        p.material.opacity = b.health;
+                    }
+                }
+
+                if(isGrounded) {
+                    player.position.x += platformDeltaX;
+                    lastGrounded = Date.now();
+                    jumps = 0;
+                    document.getElementById('stab-val').innerText = Math.max(0, Math.floor(foundPlat.userData.health * 100)) + "%";
+                } else {
+                    document.getElementById('stab-val').innerText = "---";
+                }
+
+                if(player.position.z > score) score = Math.floor(player.position.z);
+                if(player.position.y < -40) triggerDeath();
+                if(player.position.z > lastZ - 300) spawnProcedural();
+
+                document.getElementById('score-val').innerText = score;
+                renderer.render(scene, camera);
+            }
+
+            function triggerDeath() {
+                if (gameState === 'GAMEOVER') return;
+                gameState = 'GAMEOVER';
+                document.exitPointerLock();
+                document.getElementById('death-screen').style.display = 'block';
+                document.getElementById('final-score').innerText = score;
+            }
+
+            function startGame() {
+                document.body.requestPointerLock();
+                document.getElementById('start-screen').style.display = 'none';
+                gameState = 'PLAYING';
+                clock.start();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
