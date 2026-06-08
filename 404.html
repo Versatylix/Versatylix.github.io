@@ -22,8 +22,16 @@
     </body>
 </html>
 <script>
+
 (function() {
-            
+            // Internais vārdu saraksts (Inside the file now)
+            const BANNED_WORDS = [
+                // LV
+
+                // EN
+
+            ];
+
             const rawPath = window.location.pathname;
             // Noņemam simbolus, lai nevarētu apiet filtru ar punktiem vai svītriņām
             const cleanPath = rawPath.toLowerCase().replace(/[^a-z0-9]/g, "");
