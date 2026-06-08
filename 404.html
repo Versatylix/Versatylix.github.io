@@ -22,8 +22,28 @@
     </body>
 </html>
 <script>
-                const displaySpan = document.getElementById('link-path');
+(function() {
+            
+            const rawPath = window.location.pathname;
+            // Noņemam simbolus, lai nevarētu apiet filtru ar punktiem vai svītriņām
+            const cleanPath = rawPath.toLowerCase().replace(/[^a-z0-9]/g, "");
+            
+            const displaySpan = document.getElementById('link-path');
             const messageP = document.getElementById('status-message');
             const titleH1 = document.getElementById('error-title');
 
+            const isBlocked = BANNED_WORDS.some(word => {
+                const cleanWord = word.toLowerCase().replace(/[^a-z0-9]/g, "");
+                return cleanPath.includes(cleanWord);
+            });
+
+            if (isBlocked) {
+                // Ja atrasts slikts vārds
+                titleH1.textContent = "403 - Forbidden";
+                messageP.innerHTML = "<b>Pieprasītais resurss ir bloķēts nepiemērota satura dēļ.</b>";
+            } else {
+                // Ja viss kārtībā
+                displaySpan.textContent = rawPath;
+            }
+        })();
 </script>
